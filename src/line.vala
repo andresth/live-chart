@@ -1,6 +1,6 @@
 using Cairo;
 
-namespace LiveChart { 
+namespace LiveChart {
     public class Line : SerieRenderer {
 
         public Region? region {get; set; default = null; }
@@ -28,19 +28,19 @@ namespace LiveChart {
             if (points.size > 0) {
                 drawer.draw(ctx, config, line, points);
                 var segments = ctx.copy_path();
-                
-                
+
+
                 if(region != null && region.has_line_color()) {
                     ctx.push_group();
                         ctx.stroke();
-                        
+
                         ctx.set_operator(Operator.CLEAR);
                         region_on_line_drawer.draw(ctx, config, intersections_generator.generate(region, config, points));
                         ctx.fill();
-                    
+
                     ctx.pop_group_to_source();
                     ctx.paint();
-                    
+
                     ctx.push_group();
 
                         ctx.set_operator(Operator.SOURCE);
@@ -53,7 +53,7 @@ namespace LiveChart {
                         ctx.fill();
                     ctx.pop_group_to_source();
                     ctx.paint();
-                    
+
                 } else {
                     ctx.stroke();
                 }
@@ -65,11 +65,11 @@ namespace LiveChart {
         public Intersections generate(Region region, Config config, Points points) {
             var resolver = new CurveRegionResolver(region);
             var intersector = new SegmentIntersector(resolver, config);
-    
+
             for (int pos = 0; pos <= points.size -1; pos++) {
                 var previous_point = points.get(pos);
                 var target_point = points.after(pos);
-    
+
                 if (this.is_out_of_area(previous_point)) {
                     continue;
                 }
@@ -83,13 +83,20 @@ namespace LiveChart {
     private class LineDrawer : Drawer {
         public void draw(Context ctx, Config config, Path line, Points points) {
             line.configure(ctx);
-                
+
             var first_point = points.first();
 
             ctx.move_to(first_point.x, first_point.y);
             for (int pos = 0; pos < points.size -1; pos++) {
                 var current_point = points.get(pos);
                 var next_point = points.after(pos);
+                if (!next_point.y.is_finite()) {
+                    continue;
+                }
+                if (!current_point.y.is_finite()) {
+                    ctx.move_to(next_point.x, next_point.y);
+                    continue;
+                }
                 if (this.is_out_of_area(current_point)) {
                     ctx.move_to(current_point.x, current_point.y);
                     continue;
