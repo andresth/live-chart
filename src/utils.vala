@@ -1,6 +1,6 @@
 using Cairo;
 
-namespace LiveChart { 
+namespace LiveChart {
 
     public float cap(float value) {
         var num_digits = num_of_digits((int) value);
@@ -18,7 +18,7 @@ namespace LiveChart {
 
         return (float) (value + delta);
     }
-    
+
     public bool has_fractional_part(float value) {
        return value != (int) value;
     }
@@ -39,23 +39,28 @@ namespace LiveChart {
 
         //Handle values below 1
         float factor = value < 10 ? cap(100 / value) : 1f;
-        float working_value = value * factor;
+        float working_value = Math.roundf(value * factor);
 
         var sqrt = Math.sqrtf(working_value);
         var divs = new Gee.ArrayList<int>();
 
-        for (int i = 1; i <= sqrt; i++) { 
+        for (int i = 1; i <= sqrt; i++) {
             if (working_value % i == 0) {
                 divs.add(i);
                 float tmp = working_value / i;
                 if (tmp != i) {
                     divs.add((int) tmp);
                 }
-            } 
+            }
         }
         divs.sort((a, b) => {
             return a - b;
         });
+
+        // rounding errors of float may result in an empty list
+        if (divs.size == 0) {
+            return new Gee.ArrayList<float?>();
+        }
 
         var ndivs = new Gee.ArrayList<float?>();
         var last_div = divs.last();

@@ -5,7 +5,7 @@ private void register_utils() {
         //given
         var fixed_max = 8.2f;
 
-        //when 
+        //when
         var next = LiveChart.cap(fixed_max);
         //then
         assert(next == 9f);
@@ -15,7 +15,7 @@ private void register_utils() {
         //given
         var fixed_max = 10f;
 
-        //when 
+        //when
         var next = LiveChart.cap(fixed_max);
         //then
         assert(next == 10f);
@@ -25,9 +25,9 @@ private void register_utils() {
         //given
         var fixed_max = 76f;
 
-        //when 
+        //when
         var next = LiveChart.cap(fixed_max);
-        
+
         //then
         assert(next == 80f);
     });
@@ -36,9 +36,9 @@ private void register_utils() {
         //given
         var fixed_max = 923f;
 
-        //when 
+        //when
         var next = LiveChart.cap(fixed_max);
-        
+
         //then
         assert(next == 1000f);
     });
@@ -47,9 +47,9 @@ private void register_utils() {
         //given
         var value = 8;
 
-        //when 
+        //when
         var has_fractional_part = LiveChart.has_fractional_part(value);
-        
+
         //then
         assert(has_fractional_part == false);
     });
@@ -58,9 +58,9 @@ private void register_utils() {
         //given
         var value = 8.00f;
 
-        //when 
+        //when
         var has_fractional_part = LiveChart.has_fractional_part(value);
-        
+
         //then
         assert(has_fractional_part == false);
     });
@@ -69,9 +69,9 @@ private void register_utils() {
         //given
         var value = 8.86f;
 
-        //when 
+        //when
         var has_fractional_part = LiveChart.has_fractional_part(value);
-        
+
         //then
         assert(has_fractional_part == true);
     });
@@ -80,7 +80,7 @@ private void register_utils() {
         //given
         var value = 100f;
 
-        //when 
+        //when
         var divisors = LiveChart.golden_divisors(value);
 
         //then
@@ -98,7 +98,7 @@ private void register_utils() {
         //given
         var value = 0.10f;
 
-        //when 
+        //when
         var divisors = LiveChart.golden_divisors(value);
 
         //then
@@ -110,11 +110,34 @@ private void register_utils() {
         assert(divisors.get(5) == 1f);
     });
 
+    Test.add_func("/Utils/golden_divisors_value_0.6", () => {
+        //given
+        var value = 0.6f;
+
+        //when
+        var divisors = LiveChart.golden_divisors(value);
+
+        //then
+        assert(divisors.get(0) == 60f);
+        assert(divisors.get(1) == 30f);
+        assert(divisors.get(2) == 15f);
+        assert(divisors.get(3) == 6f);
+        assert(divisors.get(4) == 3f);
+    });
+
     Test.add_func("/Utils/golden_divisors#ShouldNotCrashWhenComputingGoldenDivisorForZero", () => {
         //given
         var value = 0f;
 
         //when //then
         LiveChart.golden_divisors(value);
-    });    
+    });
+
+    Test.add_func("/Utils/golden_divisors#ShouldNotCrashWhenComputingGoldenDivisorFor0.6", () => {
+        //given
+        var value = 0.6f;  // this turns out to be 0.6000000238418579, as float has no exact representation of 0.6
+
+        //when //then
+        LiveChart.golden_divisors(value);
+    });
 }
