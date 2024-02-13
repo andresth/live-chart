@@ -45,10 +45,10 @@ namespace LiveChart {
         var divs = new Gee.ArrayList<int>();
 
         for (int i = 1; i <= sqrt; i++) {
-            if (working_value % i == 0) {
+            if ((int)working_value % i == 0) {
                 divs.add(i);
                 float tmp = working_value / i;
-                if (tmp != i) {
+                if ((tmp - i) >= float.EPSILON) {
                     divs.add((int) tmp);
                 }
             }
