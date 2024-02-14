@@ -48,7 +48,7 @@ namespace LiveChart {
             if ((int)working_value % i == 0) {
                 divs.add(i);
                 float tmp = working_value / i;
-                if ((tmp - i) >= float.EPSILON) {
+                if ((tmp - i).abs() >= float.EPSILON) {
                     divs.add((int) tmp);
                 }
             }
