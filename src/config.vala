@@ -1,6 +1,6 @@
 using Cairo;
 
-namespace LiveChart { 
+namespace LiveChart {
 
     [Flags]
     public enum AutoPadding {
@@ -49,13 +49,17 @@ namespace LiveChart {
             get; set; default = 0;
         }
 
+        public bool use_system_style {
+            get; set; default = false;
+        }
+
         public Padding padding = Padding();
 
         public YAxis y_axis = new YAxis();
         public XAxis x_axis = new XAxis();
-        
+
         public TimeSeek time = new TimeSeek();
-        
+
         internal Gee.ArrayList<string> categories;
 
         public Boundaries boundaries() {
@@ -75,11 +79,11 @@ namespace LiveChart {
             if (AutoPadding.LEFT in this.padding.smart) this.padding.left = (int) y_axis.labels.extents.width;
             if (AutoPadding.BOTTOM in this.padding.smart) this.padding.bottom = 15 + (int) x_axis.labels.extents.height;
             if (AutoPadding.TOP in this.padding.smart) this.padding.top = 10;
-            
+
             if(legend != null && AutoPadding.BOTTOM in this.padding.smart) {
                this.padding.bottom = this.padding.bottom + (int) legend.get_bounding_box(this).height + 5;
             }
-            
+
             this.y_axis.update(this.boundaries().height);
         }
 
@@ -99,7 +103,7 @@ namespace LiveChart {
                 extents.y_advance = 0.0;
                 extents.y_bearing  = 0.0;
             }
-            
+
             y_axis.labels.extents = extents;
         }
 
