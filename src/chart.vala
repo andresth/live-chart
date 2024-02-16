@@ -12,16 +12,16 @@ namespace LiveChart {
         private Cairo.Context? cairo_context = null;
 
         public Grid grid { get; set; default = new Grid(); }
-        public Background background { get; set; default = new Background(); } 
-        public Legend legend { get; set; default = new HorizontalLegend(); } 
+        public Background background { get; set; default = new Background(); }
+        public Legend legend { get; set; default = new HorizontalLegend(); }
         public Config config;
         public Series series;
 
-        public int refresh_rate { get; private set; default = 100; } 
+        public int refresh_rate { get; private set; default = 100; }
 
         private uint source_timeout = 0;
         private double play_ratio = 1.0;
-        
+
         private int64 prev_time;
 
         public Chart(Config config = new Config()) {
@@ -32,7 +32,7 @@ namespace LiveChart {
             });
 
             this.set_draw_func(render);
-            
+
             this.refresh_every(this.refresh_rate);
 
             this.series = new Series(this);
@@ -60,7 +60,7 @@ namespace LiveChart {
             serie.add(value);
         }
 
-        [Version (deprecated = true, deprecated_since = "1.7.0", replacement = "Retrieve the Serie from Chart.series and add the value using serie.add")]        
+        [Version (deprecated = true, deprecated_since = "1.7.0", replacement = "Retrieve the Serie from Chart.series and add the value using serie.add")]
         public void add_value_by_index(int serie_index, double value) throws ChartError {
             try {
                 var serie = series.get(serie_index);
@@ -104,7 +104,7 @@ namespace LiveChart {
             this.play_ratio = play_ratio;
             this.refresh_rate = refresh_rate;
             if (source_timeout != 0) {
-                GLib.Source.remove(source_timeout); 
+                GLib.Source.remove(source_timeout);
                 source_timeout = 0;
             }
             if(refresh_rate > 0){
@@ -126,9 +126,22 @@ namespace LiveChart {
         }
 
         private void render(Gtk.DrawingArea drawing_area, Context ctx, int width, int height) {
+            if (config.use_system_style) {
+                var foreground_color = this.get_style_context().get_color();
+                var foreground_color_dimmed = foreground_color;
+                foreground_color_dimmed.alpha = 0.3f;
+
+                this.background.visible = false;
+                this.config.x_axis.lines.color = foreground_color_dimmed;
+                this.config.y_axis.lines.color = foreground_color_dimmed;
+                this.config.x_axis.labels.font.color = foreground_color;
+                this.config.y_axis.labels.font.color = foreground_color;
+                this.legend.labels.font.color = foreground_color;
+            }
+
             cairo_context = ctx;
             config.configure(ctx, legend);
-            
+
             this.background.draw(ctx, config);
             this.grid.draw(ctx, config);
             if(this.legend != null) this.legend.draw(ctx, config);
